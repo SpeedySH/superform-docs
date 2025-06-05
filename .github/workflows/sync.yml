@@ -43,9 +43,14 @@ jobs:
           
           # Находим все markdown файлы в src и подпапках исходного репозитория
           find /tmp/source-repo/src -type f -name "*.md" | while read file; do
-            # Получаем только имя файла без пути
-            filename=$(basename "$file")
+            # Создаем уникальное имя на основе пути
+            # Вырезаем префикс /tmp/source-repo/src/
+            relpath=${file#"/tmp/source-repo/src/"}
+            # Заменяем слэши на дефисы
+            filename=$(echo "$relpath" | sed 's/\//-/g')
+            
             echo "⚙️ Обработка файла: $file"
+            echo "   → Будет сохранен как: $filename"
             
             # Создаём временный файл
             temp_file="/tmp/md_processing/$filename"
