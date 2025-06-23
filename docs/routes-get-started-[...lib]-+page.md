@@ -69,7 +69,7 @@ The main thing required to create a Superform is a validation schema, representi
 import { type } from 'arktype';
 
 const schema = type({
-  name: 'string',
+  name: 'string = "Hello world!"',
   email: 'email'
 });
 ```
@@ -240,7 +240,7 @@ const schema = z.object({
 
 #### Schema caching
 
-Define the schema *outside* the load function, on the top level of the module. **This is very important to make caching work.** The adapter is memoized (cached) with its arguments, so they must be kept in memory. 
+Define the schema *outside* the load function, on the top level of the module. **This is very important to make caching work.** The adapter is memoized (cached) based on its arguments, so they must be kept in memory.
 
 Therefore, define the schema, its options and potential defaults on the top level of a module, so they always refer to the same object.
 
@@ -259,16 +259,12 @@ import { type } from 'arktype';
 
 // Define outside the load function so the adapter can be cached
 const schema = type({
-  name: 'string',
+  name: 'string = "Hello world!',
   email: 'email'
 });
 
-// Defaults should also be defined outside the load function
-const defaults = { name: 'Hello world!', email: '' };
-
 export const load = async () => {
-  // Arktype requires explicit default values for now
-  const form = await superValidate(arktype(schema, { defaults }));
+  const form = await superValidate(arktype(schema));
 
   // Always return { form } in load functions
   return { form };
@@ -578,7 +574,7 @@ import { error } from '@sveltejs/kit';
 
 export const load = async ({ params }) => {
   // Replace with your database
-  const user = db.users.findUnique({
+  const user = await db.users.findUnique({
     where: { id: params.id }
   });
 
